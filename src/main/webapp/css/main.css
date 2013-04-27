@@ -1,0 +1,24 @@
+.sliderSpan {
+	font-weight: bold;
+	color: #F6A828;
+}
+
+.configItem {
+	margin:10px 10px 10px 10px; 
+}
+
+.content, .content-source {
+    display: none;
+    font-size:30px;
+}
+.wsContentPanel {
+	font-size:1.25em;
+}
+
+.wsContentWrapper{
+	height: 100px;
+}
+
+.feedSelectDiv, .feedPostDiv {
+	margin:10px 10px 10px 0px; 
+}
