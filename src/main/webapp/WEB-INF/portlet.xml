@@ -15,7 +15,7 @@
 		</supports>
 		<portlet-info>
 			<title>Speed Read Portlet</title>
-			<short-title>speed-read-portlet</short-title>
+			<short-title>Speed Read Portlet</short-title>
 			<keywords>speed,read,portlet,reading,fast,comprehension</keywords>
 		</portlet-info>
 		<security-role-ref>
