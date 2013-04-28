@@ -22,29 +22,33 @@
 
 <portlet:defineObjects />
 <div class="wsContentWrapper">
-	<span class="status"></span>
-	<div class="feedSelectDiv" id="feedSelectDiv">
-		<select id="feedSelect">
-			<option value="">Select A Feed</option>
-		</select>
-	</div>
-	<div class="feedPostDiv" id="feedPostDiv">
-		<select id="feedPostSelect">
-			<option value="">Select A Post</option>
-		</select>
-	</div>
-
 	<div class="wsContentPanel">Test</div>
 </div>
 
 <div class="content-source">One Two Three Four Five Six Seven
 	Eight Nine Ten Eleven, twelve, Thirteen, fourteen, fifteen</div>
-<input type="button" value="Start" id="start" />
-<input type="button" value="Stop" id="stop" class="stop" />
-<input type="button" value="Pause" id="pause" class="pause" />
-<input type="button" value="Resume" id="resume" class="resume" />
-
+<div class="buttons">
+	<input type="button" value="Start" id="start" />
+	<input type="button" value="Stop" id="stop" class="stop" />
+	<input type="button" value="Pause" id="pause" class="pause" />
+	<input type="button" value="Resume" id="resume" class="resume" />
+	<input type="button" value="Settings" id=settings class="settings" />
+</div>
+<div id="config-dialog">
 <form id="config">
+	<span id="status"></span>
+	<div class="feedSelectDiv" id="feedSelectDiv">
+	<label for=feedSelect">Select a Feed</label>	
+	<select id="feedSelect">
+			<option value="">Select A Feed</option>
+		</select>
+	</div>
+	<div class="feedPostDiv" id="feedPostDiv">
+	<label for=feedPostSelect">Select a Post</label>
+	<select id="feedPostSelect">
+			<option value="">Select A Post</option>
+		</select>
+	</div>
 	<div class="configItem">
 		Show <span class="sliderSpan" id="wordsPerMinuteSpan">20</span> Words
 		per Minute <input type="hidden" id="wordsPerMinute" value="10" />
@@ -56,3 +60,4 @@
 		<div id="wordsPerLineSlider"></div>
 	</div>
 </form>
+</div>

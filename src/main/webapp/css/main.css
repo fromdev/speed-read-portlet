@@ -3,7 +3,7 @@
 	color: #F6A828;
 }
 
-.configItem {
+.configItem, .buttons {
 	margin:10px 10px 10px 10px; 
 }
 
@@ -15,8 +15,17 @@
 	font-size:1.25em;
 }
 
-.wsContentWrapper{
-	height: 100px;
+.wsContentWrapper {
+	height: auto;
+	min-height:100px;
+	min-width:100px;
+	width:auto;
+	padding:10px, 10px, 10px, 10px;
+	margin:10px, 10px, 10px, 10px;
+	border:1px solid #dddddd;
+	text-align:center;
+	vertical-align:middle;
+	line-height: 100px;
 }
 
 .feedSelectDiv, .feedPostDiv {

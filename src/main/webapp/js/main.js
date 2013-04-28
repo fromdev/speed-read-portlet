@@ -37,7 +37,6 @@ $(document).ready(function() {
 		fieldId : "#wordsPerLine"
 	});
 
-
 	$("#start").click(function() {
 		// $('.content-source').wordSequencer({displayElementClass:'wsContentPanel',
 		// wordsPerLine:$("#wordsPerLine").val(),
@@ -62,7 +61,7 @@ $(document).ready(function() {
 
 	$('#feedSelect').change(function() {
 		var feedUrl = $(this).val();
-		$('.status').text('Loading...');
+		$('#status').text('Loading...');
 		var selectedFeedData = [];
 
 		selectedFeedData = feedCache[feedUrl];
@@ -114,7 +113,14 @@ $(document).ready(function() {
 			 * function(data) { console.log("Feed error" + data); } });
 			 */
 		}
-		$('.status').empty();
+		
+		$('#status').empty();
+	});
+	$('#config-dialog').dialog({autoOpen: false, width:'auto', title:'Settings'});
+	
+	$('#settings').click(function(){
+		$('#feedPostSelect').trigger('change');
+		$('#config-dialog').dialog('open');
 	});
 
 });
@@ -307,11 +313,11 @@ function setupNewFeedPosts(selectedFeedData) {
 		}
 		$('.content-source').html(txt);
 		$('.content-source').wordSequencer('stop');
-		$('.content-source').wordSequencer({
-			displayElementClass : 'wsContentPanel',
-			wordsPerLine : parseInt($("#wordsPerLine").val(), 10),
-			wordsPerMinute : parseInt($("#wordsPerMinute").val(), 10)
-		});
+//		$('.content-source').wordSequencer({
+//			displayElementClass : 'wsContentPanel',
+//			wordsPerLine : parseInt($("#wordsPerLine").val(), 10),
+//			wordsPerMinute : parseInt($("#wordsPerMinute").val(), 10)
+//		});
 	});
 	$('#feedPostSelect').trigger('change');
 
