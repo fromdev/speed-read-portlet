@@ -34,7 +34,7 @@
  	<!-- 	<button id="backward">backward</button>  -->
 			<button id="play">play</button>
 			<button id="stop">stop</button>
-    <!-- 	<button id="forward">fast forward</button>  -->
+     	 	<button id="forward">fast forward</button>  
 			<button class="settings" id="settings">settings</button>
 		</div>
  	</div>	

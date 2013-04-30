@@ -338,8 +338,6 @@ $(document).ready(function() {
 		$('.content-source').wordSequencer('stop');
 	});
 	
-	/*
-	
 	$( "#forward" ).button({
 	      text: false,
 	      icons: {
@@ -368,7 +366,7 @@ $(document).ready(function() {
 	    		console.log('next post in new site');
 	    	}
 		});
-*/
+
 	$("#settings").button({
 		text : false,
 		icons : {
