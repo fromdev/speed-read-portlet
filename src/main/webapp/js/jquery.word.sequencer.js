@@ -75,6 +75,8 @@
 				clearInterval(settings.showHide);
 				settings.status = pluginStatus.stopped;
 				settings.currentIndex = 0;
+				//invoke the callback on finish
+				settings.finish();
 				log("stopped");
 			} else {
 				log("Not running - " + settings.status);
@@ -113,6 +115,8 @@
 			methods.stop();
 		} else if (options == 'pause') {
 			methods.pause();
+		} else if (options == 'status') {
+			return settings.status;
 		} else if (options == 'resume') {
 			$.extend(settings, {
 				currentElement : this
@@ -122,7 +126,11 @@
 			$.extend(settings, {
 				currentElement : this
 			});
-			methods.restart(options);
+			if(settings.status == pluginStatus.paused) {
+				methods.resume(options);
+			} else {
+				methods.restart(options);
+			}
 		}
 	};
 

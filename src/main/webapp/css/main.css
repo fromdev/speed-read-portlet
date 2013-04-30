@@ -27,7 +27,32 @@
 	vertical-align:middle;
 	line-height: 100px;
 }
+.wsContentHeader {
+	padding:10px, 10px, 10px, 10px;
+	text-align:center;
+	font-weight: bold;
+}
 
+.settings-section {
+	border:1px solid #dddddd;
+	padding:0px 10px;
+	margin:10px 10px;
+}
 .feedSelectDiv, .feedPostDiv {
 	margin:10px 10px 10px 0px; 
 }
+
+ 
+#toolbar-wrapper .child {
+	margin:10px auto;	
+ 	width:120px;
+}
+  #toolbar {
+	margin:0px auto;
+    padding: 4px;
+    display: inline-block;
+  }
+  /* support: IE7 */
+  *+html #toolbar {
+    display: inline;
+  }

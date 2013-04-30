@@ -21,24 +21,32 @@
 </script>
 
 <portlet:defineObjects />
+<div class="wsContentHeader">Now Reading: Test</div>
 <div class="wsContentWrapper">
-	<div class="wsContentPanel">Test</div>
+	<div class="wsContentPanel"></div>
 </div>
 
 <div class="content-source">One Two Three Four Five Six Seven
 	Eight Nine Ten Eleven, twelve, Thirteen, fourteen, fifteen</div>
-<div class="buttons">
-	<input type="button" value="Start" id="start" />
-	<input type="button" value="Stop" id="stop" class="stop" />
-	<input type="button" value="Pause" id="pause" class="pause" />
-	<input type="button" value="Resume" id="resume" class="resume" />
-	<input type="button" value="Settings" id=settings class="settings" />
+<div id="toolbar-wrapper">
+ 	<div class="child">
+ 		<div class="ui-widget-header ui-corner-all" id="toolbar">
+ 	<!-- 	<button id="backward">backward</button>  -->
+			<button id="play">play</button>
+			<button id="stop">stop</button>
+    <!-- 	<button id="forward">fast forward</button>  -->
+			<button class="settings" id="settings">settings</button>
+		</div>
+ 	</div>	
 </div>
 <div id="config-dialog">
 <form id="config">
-	<span id="status"></span>
+<span id="status"></span>
+	
+<div class="settings-section">	
+<h3>Content Settings</h3>	
 	<div class="feedSelectDiv" id="feedSelectDiv">
-	<label for=feedSelect">Select a Feed</label>	
+	<label for="feedSelect">Select a Feed</label>	
 	<select id="feedSelect">
 			<option value="">Select A Feed</option>
 		</select>
@@ -49,6 +57,10 @@
 			<option value="">Select A Post</option>
 		</select>
 	</div>
+</div>
+<div class="settings-section">	
+<h3>Speed Settings</h3>	
+
 	<div class="configItem">
 		Show <span class="sliderSpan" id="wordsPerMinuteSpan">20</span> Words
 		per Minute <input type="hidden" id="wordsPerMinute" value="10" />
@@ -59,5 +71,6 @@
 		per line <input type="hidden" id="wordsPerLine" value="10" />
 		<div id="wordsPerLineSlider"></div>
 	</div>
+</div>
 </form>
 </div>
