@@ -32,15 +32,18 @@
 
 				var calculatedSettings = {
 					fadeInTime : ((settings.wordsPerLine * 60 * 100) / settings.wordsPerMinute) - 10,
-					fadeOutTime : ((settings.wordsPerLine * 60 * 100) / settings.wordsPerMinute) - 10,
-					delayTime : ((settings.wordsPerLine * 60 * 800) / settings.wordsPerMinute) - 80,
+					//fadeOutTime : ((settings.wordsPerLine * 60 * 100) / settings.wordsPerMinute) - 10,
+					//delayTime : ((settings.wordsPerLine * 60 * 800) / settings.wordsPerMinute) - 80,
 					words : $(settings.currentElement).text().split(' '),
 					totalTime : (settings.wordsPerLine * 60 * 1000) / settings.wordsPerMinute
 				};
 				$.extend(settings, calculatedSettings);
 				// prepare(settings);
 				// play(settings);
-				log("settings[ fadeIn:" + settings.fadeInTime + ", fadeOut:" + settings.fadeOutTime + ", delayTime:" + settings.delayTime + ", totalTime:"
+				log("settings[ fadeIn:" + settings.fadeInTime 
+						//+ ", fadeOut:" + settings.fadeOutTime 
+						//+ ", delayTime:" + settings.delayTime 
+						+ ", totalTime:"
 						+ settings.totalTime + "] text:[" + $(this).text() + "]");
 
 				settings.status = pluginStatus.running;
@@ -56,9 +59,9 @@
 					}
 
 					$("." + settings.displayElementClass).fadeIn(settings.fadeInTime).text(displayWords);
-					if (settings.status == pluginStatus.running) {
-						$("." + settings.displayElementClass).delay(settings.delayTime).fadeOut(settings.fadeOutTime);
-					}
+					//if (settings.status == pluginStatus.running) {
+						//$("." + settings.displayElementClass).delay(settings.delayTime).fadeOut(settings.fadeOutTime);
+					//}
 					log("running " + settings.currentIndex + " wl: " + settings.words.length + ", mx: " + mx);
 					settings.currentIndex = mx;
 					if (settings.currentIndex >= settings.words.length) {
@@ -71,7 +74,7 @@
 			}
 		},
 		stop : function() {
-			if (settings.status == pluginStatus.running) {
+			if (settings.status !== pluginStatus.stopped) {
 				clearInterval(settings.showHide);
 				settings.status = pluginStatus.stopped;
 				settings.currentIndex = 0;

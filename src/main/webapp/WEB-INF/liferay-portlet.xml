@@ -11,6 +11,8 @@
 		<header-portlet-javascript>/js/jquery-1.9.1.js</header-portlet-javascript>
 		<header-portlet-javascript>/js/jquery-ui-1.10.2.custom.js</header-portlet-javascript>
 		<header-portlet-javascript>/js/jquery.word.sequencer.js</header-portlet-javascript>		
+		<header-portlet-javascript>/js/ui-util.js</header-portlet-javascript>		
+		<header-portlet-javascript>/js/feed-util.js</header-portlet-javascript>		
 		<footer-portlet-javascript>/js/main.js</footer-portlet-javascript>
 	</portlet>
 	<role-mapper>

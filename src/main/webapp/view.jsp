@@ -34,33 +34,31 @@
  	<!-- 	<button id="backward">backward</button>  -->
 			<button id="play">play</button>
 			<button id="stop">stop</button>
-     	 	<button id="forward">fast forward</button>  
+     	 	<button id="forward">next article</button>  
 			<button class="settings" id="settings">settings</button>
 		</div>
  	</div>	
 </div>
 <div id="config-dialog">
-<form id="config">
 <span id="status"></span>
-	
+<form id="config">	
 <div class="settings-section">	
 <h3>Content Settings</h3>	
 	<div class="feedSelectDiv" id="feedSelectDiv">
-	<label for="feedSelect">Select a Feed</label>	
-	<select id="feedSelect">
-			<option value="">Select A Feed</option>
+		<label for="feedSelect">Select a Feed</label>
+		<select id="feedSelect">
+			<option value="">Select a Feed</option>
 		</select>
 	</div>
 	<div class="feedPostDiv" id="feedPostDiv">
-	<label for=feedPostSelect">Select a Post</label>
-	<select id="feedPostSelect">
-			<option value="">Select A Post</option>
+		<label for="feedPostSelect">Select a Post</label>
+		<select id="feedPostSelect">
+			<option value="">Select a Post</option>
 		</select>
 	</div>
 </div>
 <div class="settings-section">	
 <h3>Speed Settings</h3>	
-
 	<div class="configItem">
 		Show <span class="sliderSpan" id="wordsPerMinuteSpan">20</span> Words
 		per Minute <input type="hidden" id="wordsPerMinute" value="10" />
@@ -71,6 +69,15 @@
 		per line <input type="hidden" id="wordsPerLine" value="10" />
 		<div id="wordsPerLineSlider"></div>
 	</div>
+</div>
+<div class="settings-section">	
+<h3>Display Settings</h3>	
+	<div class="configItem">
+		Font size : <span class="sliderSpan" id="fontSizeSpan">11</span>
+		<input type="hidden" id="fontSize" value="11" />
+		<div id="fontSizeSlider"></div>
+	</div>
+	<div class="preview">Preview Display</div>
 </div>
 </form>
 </div>
