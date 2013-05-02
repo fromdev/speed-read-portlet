@@ -64,7 +64,7 @@ $(document).ready(function() {
 
 	$.spanSlider({
 		min : 10,
-		max : 1000,
+		max : 1500,
 		start : appSettings.wordsPerMinute,
 		fieldId : "#wordsPerMinute"
 	});
