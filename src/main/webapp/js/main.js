@@ -7,32 +7,19 @@ $(document).ready(function() {
 	 * Settings
 	 */
 	var appSettings = {
-		currentFeedId : 0,
-		currentPostId : 0,
+		currentFeedId : 2,
+		currentPostId : 1,
 		wordsPerMinute : 150,
 		wordsPerLine : 2,
 		fontSize : 11
 	};
 
+	if(userPrefs) {
+		appSettings = $.extend({},appSettings,userPrefs);
+	}
 	var getEmFontSize = function(fontSize) {
 		return (1 + (fontSize - 1) * 0.1);
 	};
-	/*
-	 * Initial/default feed list that can be overridden by jsonp call
-	 */
-	var feedsList = [ {
-		url : 'http://feeds.feedburner.com/Quicksprout',
-		title : 'Quicksprout'
-	}, {
-		url : 'http://feeds.feedburner.com/Fromdev',
-		title : 'FromDev'
-	}, {
-		url : 'http://feeds.feedburner.com/TechCrunch/',
-		title : 'TechCrunch'
-	}, {
-		url : 'http://rss.cnn.com/rss/cnn_topstories.rss',
-		title : 'CNN'
-	} ];
 
 	var feedListUrl = "http://fromdevstatic.googlecode.com/svn/trunk/src/js/feed.list.json";
 
@@ -41,14 +28,14 @@ $(document).ready(function() {
 		dataType : "jsonp",
 		jsonpCallback : "feedListJsonLoader",
 		success : function(data) {
-			log('loaded feeds list');
+			log('loaded remote feeds list from ' + feedListUrl);
 			if (data) {
 				if (feedsList.length < data.length) {
 					feedsList = data;
-					$('#feedSelect').buildOptions({
-						data : feedsList
-					});
 				}
+				$('#feedSelect').buildOptions({
+					data : feedsList
+				});
 			}
 
 		},
@@ -143,12 +130,8 @@ $(document).ready(function() {
 		$('.content-source').wordSequencer('stop');
 	});
 
-	$("#forward").button({
-		text : false,
-		icons : {
-			primary : "ui-icon-seek-next"
-		}
-	}).click(function() {
+	var findNextFeed = function() {
+
 		//
 		var nextIdx = $('#feedPostSelect option:selected').index() + 1;
 		log('forwarding - ' + nextIdx);
@@ -171,6 +154,16 @@ $(document).ready(function() {
 
 			log('next post in new site ' + nextFeedIdx + ', ' + feedLen);
 		}
+	
+	};
+	
+	$("#forward").button({
+		text : false,
+		icons : {
+			primary : "ui-icon-seek-next"
+		}
+	}).click(function() {
+		findNextFeed();
 	});
 
 	$("#settings").button({
@@ -206,15 +199,13 @@ $(document).ready(function() {
 		$('#status').text(msg);
 	};
 
-	var processFeedChange = function() {
-
-		var feedUrl = $('#feedSelect option:selected').val();
+	var processFeedChange = function(options) {
 		updateStatus('Loading...');
 		$.loadFeed({
-			url : feedUrl,
+			url : options.url,
 			callback : processFeedData
 		});
-		appSettings.currentFeedId = $('#feedSelect option:selected').index();
+		appSettings.currentFeedId = options.id;
 	};
 
 	var applyContentSettings = function() {
@@ -236,9 +227,10 @@ $(document).ready(function() {
 		}
 	};
 
-	var processPostChange = function() {
-
-		var selected = $('#feedPostSelect option:selected').index();
+	var processPostChange = function(options) {
+		//options.id = $('#feedPostSelect option:selected').index();
+		
+		var selected = options.id;
 		log('index: ' + selected);
 		if (!selected) {
 			if ($('#feedPostSelect option').length > 0) {
@@ -255,10 +247,21 @@ $(document).ready(function() {
 
 	};
 
-	$('#feedSelect').change(processFeedChange);
-	$('#feedPostSelect').change(processPostChange);
+	$('#feedSelect').change(function() {
+		processFeedChange({
+			url : $('#feedSelect option:selected').val(),
+			id : $('#feedSelect option:selected').index()
+		});
+	});
+	$('#feedPostSelect').change(function() {
+		processPostChange({
+			id : $('#feedPostSelect option:selected').index()
+		});
+	});
 
 	$('#feedSelect option:first').attr('selected', true);
+//	$('#feedSelect option:eq(' + appSettings.currentFeedId + ')').attr('selected', true);
+//	$('#feedPostSelect option:eq(' + appSettings.currentPostId + ')').attr('selected', true);
 	$('#feedPostSelect option:first').attr('selected', true);
 	$('#feedSelect').trigger('change');
 	$('#fontSize').trigger('change');

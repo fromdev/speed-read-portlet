@@ -1,4 +1,5 @@
 
+<%@page import="javax.portlet.PortletPreferences"%>
 <%
 	/**
 	 * Copyright (c) 2000-2012 Liferay, Inc. All rights reserved.
@@ -16,11 +17,20 @@
 %>
 
 <%@ taglib uri="http://java.sun.com/portlet_2_0" prefix="portlet"%>
-<script>
-	actionUrl = '<portlet:actionURL />';
-</script>
 
 <portlet:defineObjects />
+
+<%
+	PortletPreferences preferences = renderRequest.getPreferences();
+	String settings = preferences.getValue("SPEED.READ.PORTLET.USER.SETTINGS", "{}");
+
+%>
+<script>
+	actionUrl = '<portlet:actionURL />';
+	userPrefs = <%=settings%>;
+</script>
+
+
 <div class="wsContentHeader">Now Reading: Test</div>
 <div class="wsContentWrapper">
 	<div class="wsContentPanel"></div>
