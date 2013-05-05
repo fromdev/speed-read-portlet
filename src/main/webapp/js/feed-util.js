@@ -47,7 +47,7 @@
 						log('setup posts done');
 
 					} else {
-						log('Error feed loading');
+						log('Error feed loading : ' + options.url);
 						// Handle error if required
 						var msg = '';
 						if (options.showerror) {
@@ -70,6 +70,11 @@
 	$.currentFeed = function() {
 		// log($(this).text());
 		return feedSettings.currentFeed;
+	};
+	$.addToCache = function(options) {
+		if(options.url) {
+			feedSettings.cache[options.url] = options.feed;
+		}
 	};
 	function log(msg) {
 		if (debug) {

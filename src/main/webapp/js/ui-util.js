@@ -56,6 +56,18 @@
 		$(config.fieldId).val($(config.sliderId).slider("value"));
 
 	};
+	$.spanSliderSetValue = function(options) {
+		var derivedConfig = {
+			spanId : (options.fieldId + "Span"),
+			sliderId : (options.fieldId + "Slider")
+		};
+		var config = $.extend({}, options, derivedConfig);
+		$(config.spanId).text(config.value);
+		$(config.fieldId).val(config.value);
+		$(config.sliderId).slider("value",config.value)
+
+	};
+	
 	$.buildDefaultSelect = function(options) {
 		if (options) {
 			$(options.containerSelector).empty();

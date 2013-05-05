@@ -30,7 +30,6 @@
 	userPrefs = <%=settings%>;
 </script>
 
-
 <div class="wsContentHeader">Now Reading: Test</div>
 <div class="wsContentWrapper">
 	<div class="wsContentPanel"></div>

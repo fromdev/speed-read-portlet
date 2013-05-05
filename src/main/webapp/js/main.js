@@ -21,6 +21,8 @@ $(document).ready(function() {
 		return (1 + (fontSize - 1) * 0.1);
 	};
 
+	$.addToCache({url:feedsList[0].url, feed:welcomeFeed});
+	
 	var feedListUrl = "http://fromdevstatic.googlecode.com/svn/trunk/src/js/feed.list.json";
 
 	$.ajax({
@@ -129,7 +131,7 @@ $(document).ready(function() {
 	}).click(function() {
 		$('.content-source').wordSequencer('stop');
 	});
-
+/*
 	var findNextFeed = function() {
 
 		//
@@ -156,6 +158,25 @@ $(document).ready(function() {
 		}
 	
 	};
+*/	
+	var findNextFeedOrPost = function() {
+		var feed = $.currentFeed();
+		if(feed) {
+			if(appSettings.currentPostId < (feed.entries.length -1) ) {
+				appSettings.currentPostId = appSettings.currentPostId + 1;
+				applyContentSettings(); 
+			} else {
+				appSettings.currentPostId = 0;
+				if(appSettings.currentFeedId < (feedsList.length - 1) ) {
+					appSettings.currentFeedId = appSettings.currentFeedId + 1;
+				} else {
+					appSettings.currentFeedId = 0;
+				}
+				processFeedChange({url:feedsList[appSettings.currentFeedId].url, id:appSettings.currentFeedId});
+
+			}
+		}
+	};
 	
 	$("#forward").button({
 		text : false,
@@ -163,15 +184,39 @@ $(document).ready(function() {
 			primary : "ui-icon-seek-next"
 		}
 	}).click(function() {
-		findNextFeed();
-	});
+    	findNextFeedOrPost();	
+ 	});
 
+
+	var displaySettings = function() {
+		$('#feedSelect option:eq(' + appSettings.currentFeedId + ')').attr('selected', true);
+		$('#feedPostSelect option:eq(' + appSettings.currentPostId + ')').attr('selected', true);
+		
+		$.spanSliderSetValue({fieldId:''}) 
+		$.spanSliderSetValue({
+			value : appSettings.wordsPerMinute,
+			fieldId : "#wordsPerMinute"
+		});
+		$.spanSliderSetValue({
+			value : appSettings.wordsPerLine,
+			fieldId : "#wordsPerLine"
+		});
+		$.spanSliderSetValue({
+			value : appSettings.fontSize,
+			fieldId : "#fontSize"
+		});
+		var fontSizeEm = getEmFontSize(appSettings.fontSize);
+		$('.preview').css('font-size', fontSizeEm + 'em');
+
+
+	};
 	$("#settings").button({
 		text : false,
 		icons : {
 			primary : "ui-icon-gear"
 		}
 	}).click(function() {
+		displaySettings();
 		if ($("#play").text() === "pause") {
 			$("#play").trigger('click');
 		}
@@ -224,6 +269,8 @@ $(document).ready(function() {
 			$('.wsContentHeader').html(selectedFeedData.title + ': ' + selectedFeedData.entries[appSettings.currentPostId].title);
 			$('.wsContentPanel').html('');
 			$('.content-source').wordSequencer('stop');
+		} else {
+			log('current feed is not available yet' + selectedFeedData);
 		}
 	};
 
@@ -277,10 +324,10 @@ $(document).ready(function() {
 
 		appSettings.fontSize = $('#fontSize').val();
 		$('.wsContentPanel').css('font-size', getEmFontSize(appSettings.fontSize) + 'em');
-
 		updateStatus('');
 	});
 
+	
 });
 
 function log(msg) {
