@@ -40,7 +40,7 @@ feedsList = [
 	                 }
 	             ];
 welcomeFeed = {
-    "title": "Welcome - Speed Read Portlet",
+    "title": "Welcome To Speed Read Portlet",
     "entries": [
         {
             "title": "Improve Reading Speed and Comprehension",

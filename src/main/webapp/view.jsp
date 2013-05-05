@@ -26,11 +26,11 @@
 
 %>
 <script>
-	actionUrl = '<portlet:actionURL />';
+	saveSettingsActionUrl = '<portlet:actionURL name="saveSettings"/>';
 	userPrefs = <%=settings%>;
 </script>
 
-<div class="wsContentHeader">Now Reading: Test</div>
+<div class="wsContentHeader">Welcome To Speed Read Portlet</div>
 <div class="wsContentWrapper">
 	<div class="wsContentPanel"></div>
 </div>
@@ -89,4 +89,17 @@
 	<div class="preview">Preview Display</div>
 </div>
 </form>
+<div class='settings-header'>
+<div class="ui-widget">
+    <div class="ui-state-highlight ui-corner-all" style="padding: 0 .7em;"> 
+        <p style="margin:0;">
+            <span class="ui-icon ui-icon-info" 
+                style="float: left; margin-right: .3em;"></span>
+            <strong>Hey: No Save Button?</strong> Changes are auto applied on close of dialog (hit ESC) when you are done
+        </p>
+    </div>
 </div>
+</div>
+
+</div>
+<%@ include file="footer.jsp"%>

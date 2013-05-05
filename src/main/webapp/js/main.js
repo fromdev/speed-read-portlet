@@ -15,12 +15,14 @@ $(document).ready(function() {
 	};
 
 	if(userPrefs) {
+		log('found user prefs' + userPrefs);
 		appSettings = $.extend({},appSettings,userPrefs);
 	}
 	var getEmFontSize = function(fontSize) {
 		return (1 + (fontSize - 1) * 0.1);
 	};
 
+	//TODO - add remote call for welcome feed too.
 	$.addToCache({url:feedsList[0].url, feed:welcomeFeed});
 	
 	var feedListUrl = "http://fromdevstatic.googlecode.com/svn/trunk/src/js/feed.list.json";
@@ -324,7 +326,19 @@ $(document).ready(function() {
 
 		appSettings.fontSize = $('#fontSize').val();
 		$('.wsContentPanel').css('font-size', getEmFontSize(appSettings.fontSize) + 'em');
-		updateStatus('');
+		log('save url' + saveSettingsActionUrl);
+		$.ajax({
+			url : saveSettingsActionUrl,
+			data : {
+				"SPEED.READ.PORTLET.USER.SETTINGS" : JSON.stringify(appSettings)
+			},
+			success : function(data) {
+				updateStatus('Successfully saved settings');
+			},
+			error : function(data) {
+				console.log("Settings save error" + data);
+			}
+		});
 	});
 
 	

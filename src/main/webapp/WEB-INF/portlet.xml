@@ -4,7 +4,7 @@
 	<portlet>
 		<portlet-name>speed-read-portlet</portlet-name>
 		<display-name>Speed Read Portlet</display-name>
-		<portlet-class>com.liferay.util.bridges.mvc.MVCPortlet</portlet-class>
+		<portlet-class>com.fromdev.portlets.SpeedReadPortlet</portlet-class>
 		<init-param>
 			<name>view-jsp</name>
 			<value>/view.jsp</value>
