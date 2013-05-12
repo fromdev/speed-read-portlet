@@ -16,7 +16,7 @@
 		<portlet-info>
 			<title>Speed Read Portlet</title>
 			<short-title>Speed Read Portlet</short-title>
-			<keywords>speed,read,portlet,reading,fast,comprehension</keywords>
+			<keywords>portlet, show, display, remote, view, read, speed, fast, quick, faster, reading, comprehension, exercise, passages, passage, feed, site, web,word,skim, skimming,course,text,photoread,photoreading,increase,improve,technique, books,education,tools,skipping,art</keywords>
 		</portlet-info>
 		<security-role-ref>
 			<role-name>administrator</role-name>
