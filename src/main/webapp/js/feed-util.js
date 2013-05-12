@@ -24,8 +24,9 @@
 			if (feedSettings.currentFeed) {
 				// reload from cache
 				log('using cache');
-				if(options.callback) {
-					options.callback(feedSettings.currentFeed);
+				if(options.success) {
+					var callbackOptions = $.extend({},options,{feed:feedSettings.currentFeed});
+					options.success(callbackOptions);
 				}
 			} else {
 				// fresh load
@@ -41,8 +42,9 @@
 						 * cache the feed
 						 */
 						feedSettings.cache[options.url] = feedSettings.currentFeed;
-						if(options.callback) {
-							options.callback(feedSettings.currentFeed);
+						if(options.success) {
+							var callbackOptions = $.extend({},options,{feed:feedSettings.currentFeed});
+							options.success(callbackOptions);
 						}
 						log('setup posts done');
 
@@ -56,6 +58,9 @@
 							} else {
 								msg = data.responseDetails;
 							}
+						}
+						if(options.error) {
+							options.error(msg);
 						}
 					}
 				});

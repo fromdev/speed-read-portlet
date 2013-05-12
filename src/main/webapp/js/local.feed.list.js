@@ -1,7 +1,7 @@
 	/*
 	 * Initial/default feed list that can be overridden by jsonp call
 	 */
-feedsList = [
+popularFeedsList = [
 	                 {
 	                     "url": "http://speed-read-portlet-welcome-message",
 	                     "title": "Welcome - Speed Read Portlet"

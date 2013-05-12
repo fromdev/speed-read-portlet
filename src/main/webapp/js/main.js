@@ -2,7 +2,7 @@ $(document).ready(function() {
 	/*
 	 * Turn this flag to true for debug logs.
 	 */
-	debug = true;
+	debug = false;
 	/*
 	 * Settings
 	 */
@@ -11,19 +11,22 @@ $(document).ready(function() {
 		currentPostId : 1,
 		wordsPerMinute : 150,
 		wordsPerLine : 2,
-		fontSize : 11
+		fontSize : 11,
+		userFeedsList:[],
+		usingUserFeeds:false
 	};
 
 	if(userPrefs) {
 		log('found user prefs' + userPrefs);
-		appSettings = $.extend({},appSettings,userPrefs);
+		appSettings = $.extend({},appSettings,userPrefs);		
 	}
+	
 	var getEmFontSize = function(fontSize) {
 		return (1 + (fontSize - 1) * 0.1);
 	};
 
 	//TODO - add remote call for welcome feed too.
-	$.addToCache({url:feedsList[0].url, feed:welcomeFeed});
+	$.addToCache({url:popularFeedsList[0].url, feed:welcomeFeed});
 	
 	var feedListUrl = "http://fromdevstatic.googlecode.com/svn/trunk/src/js/feed.list.json";
 
@@ -34,11 +37,11 @@ $(document).ready(function() {
 		success : function(data) {
 			log('loaded remote feeds list from ' + feedListUrl);
 			if (data) {
-				if (feedsList.length < data.length) {
-					feedsList = data;
+				if (popularFeedsList.length < data.length) {
+					popularFeedsList = data;
 				}
 				$('#feedSelect').buildOptions({
-					data : feedsList
+					data : popularFeedsList
 				});
 			}
 
@@ -48,11 +51,18 @@ $(document).ready(function() {
 			log(data);
 		}
 	});
+	var feedsList = popularFeedsList;
 
+	if(appSettings.userFeedsList && (appSettings.userFeedsList.length > 0)) {
+		appSettings.usingUserFeeds = true;
+		feedsList = $.merge(popularFeedsList,appSettings.userFeedsList);
+		//eliminate duplicates
+		feedsList = removeDuplicates(feedsList);
+	}
+	
 	$('#feedSelect').buildOptions({
 		data : feedsList
 	});
-
 	$.spanSlider({
 		min : 10,
 		max : 1500,
@@ -83,7 +93,7 @@ $(document).ready(function() {
 		width : 'auto',
 		title : 'Settings'
 	});
-
+	
 	$("#play").button({
 		text : false,
 		icons : {
@@ -133,51 +143,36 @@ $(document).ready(function() {
 	}).click(function() {
 		$('.content-source').wordSequencer('stop');
 	});
-/*
-	var findNextFeed = function() {
-
-		//
-		var nextIdx = $('#feedPostSelect option:selected').index() + 1;
-		log('forwarding - ' + nextIdx);
-
-		var len = $('#feedPostSelect option').length;
-		if (nextIdx < len) {
-			log('next post in same site');
-			$('#feedPostSelect option:eq(' + nextIdx + ')').attr('selected', true);
-			$('#feedPostSelect').trigger('change');
-		} else {
-			// jump to next site.
-			var nextFeedIdx = $('#feedSelect option:selected').index() + 1;
-			var feedLen = $('#feedSelect option').length;
-			if (nextFeedIdx >= feedLen) {
-				log('We have hit the last feed');
-				nextFeedIdx = 0;
-			}
-			$('#feedSelect option:eq(' + nextFeedIdx + ')').attr('selected', true);
-			$('#feedSelect').trigger('change');
-
-			log('next post in new site ' + nextFeedIdx + ', ' + feedLen);
-		}
 	
-	};
-*/	
-	var findNextFeedOrPost = function() {
-		var feed = $.currentFeed();
-		if(feed) {
-			if(appSettings.currentPostId < (feed.entries.length -1) ) {
-				appSettings.currentPostId = appSettings.currentPostId + 1;
-				applyContentSettings(); 
-			} else {
-				appSettings.currentPostId = 0;
-				if(appSettings.currentFeedId < (feedsList.length - 1) ) {
-					appSettings.currentFeedId = appSettings.currentFeedId + 1;
-				} else {
-					appSettings.currentFeedId = 0;
-				}
-				processFeedChange({url:feedsList[appSettings.currentFeedId].url, id:appSettings.currentFeedId});
 
+
+		var findNextFeedOrPost = function() {
+
+		var feed = $.currentFeed();
+
+		
+		if (feed && (appSettings.currentPostId < (feed.entries.length - 1))) {
+			appSettings.currentPostId = appSettings.currentPostId + 1;
+			applyContentSettings();
+			log('feed.entries.len - ' + feed.entries.length + ' : ' + appSettings.currentPostId);
+		} else {
+			appSettings.currentPostId = 0;
+			log('feed list is ' + feedsList.length);
+			if (appSettings.currentFeedId < (feedsList.length - 1)) {
+				appSettings.currentFeedId = appSettings.currentFeedId + 1;
+				log('jumping to next feed' + appSettings.currentFeedId);
+			} else {
+				appSettings.currentFeedId = 0;
+				log('jumping to first feed' + appSettings.currentFeedId);
 			}
+			processFeedChange({
+				url : feedsList[appSettings.currentFeedId].url,
+				id : appSettings.currentFeedId,
+				postElementSelector : '#feedPostSelect'
+			});
+
 		}
+
 	};
 	
 	$("#forward").button({
@@ -186,15 +181,19 @@ $(document).ready(function() {
 			primary : "ui-icon-seek-next"
 		}
 	}).click(function() {
-    	findNextFeedOrPost();	
- 	});
+        findNextFeedOrPost();	
+        saveSettingsOnServer();
+    });
 
 
 	var displaySettings = function() {
-		$('#feedSelect option:eq(' + appSettings.currentFeedId + ')').attr('selected', true);
-		$('#feedPostSelect option:eq(' + appSettings.currentPostId + ')').attr('selected', true);
+		log('feedId: ' + appSettings.currentFeedId + ' postid:' + appSettings.currentPostId);
 		
-		$.spanSliderSetValue({fieldId:''}) 
+		$("#feedSelect option:selected").prop("selected", false);
+		$('#feedSelect option:eq(' + appSettings.currentFeedId + ')').prop('selected', true);
+		$("#feedPostSelect option:selected").prop("selected", false);
+		$('#feedPostSelect option:eq(' + appSettings.currentPostId + ')').prop('selected', true);
+		
 		$.spanSliderSetValue({
 			value : appSettings.wordsPerMinute,
 			fieldId : "#wordsPerMinute"
@@ -209,7 +208,9 @@ $(document).ready(function() {
 		});
 		var fontSizeEm = getEmFontSize(appSettings.fontSize);
 		$('.preview').css('font-size', fontSizeEm + 'em');
+		$('.wsContentPanel').css('font-size', fontSizeEm + 'em');
 
+		log('display settings applied');
 
 	};
 	$("#settings").button({
@@ -225,10 +226,35 @@ $(document).ready(function() {
 		$('#config-dialog').dialog('open');
 	});
 
-	var processFeedData = function(feed) {
+	$("#addUserFeed").button({
+		text:false,
+		icons : {
+			primary : "ui-icon-plusthick"
+		}
+	}).click(function() {
+		var newUrl = $('#userFeedInput').val().trim();
+		if($.validateUrl(newUrl)) {
+			if(isUniqueUrl({list:appSettings.userFeedsList,url:newUrl})) {
+				processUserFeedChange({
+					url : newUrl,
+					feedElementSelector : '#feedSelect',
+					postElementSelector : '#feedPostSelect'
+				});
+			
+			} else {
+				updateStatus('This Feed is already in the list');
+			}
+		} else {
+			updateStatus('Please provide a valid feed URL');
+		}
+	});
+	$('#config').submit(function(){
+		return false;
+	});
+	var processFeedData = function(options) {
 		log('callback called');
-		$('#feedPostSelect').buildPostOptions({
-			data : feed
+		$(options.postElementSelector).buildPostOptions({
+			data : options.feed
 		});
 
 		log('build select done');
@@ -237,21 +263,46 @@ $(document).ready(function() {
 		// change event every
 		// time we create a new
 		// select.
-		$('#feedPostSelect').trigger('change');
-		appSettings.currentPostId = $('#feedPostSelect option:selected').index();
-
+		$(options.postElementSelector).trigger('change');
+		appSettings.currentPostId = $(options.postElementSelector + " option:selected").index();
 		updateStatus('');
 	};
 	var updateStatus = function(msg) {
 		$('#status').text(msg);
 	};
+	var processUserFeedData = function(options) {
+		log('user feed callback called');
+		
+		appSettings.userFeedsList.push({title:options.feed.title, url:options.feed.feedUrl});
+		
+		$(options.feedElementSelector).addOption({value:options.feed.title, key:options.feed.feedUrl, selected:true});
+
+		$(options.postElementSelector).buildPostOptions({
+			data : options.feed
+		});
+
+		log('build user select done');
+		// This is needed since
+		// we need to bind
+		// change event every
+		// time we create a new
+		// select.
+		$(options.postElementSelector).trigger('change');
+		appSettings.currentPostId = 0;
+
+		updateStatus('');
+	};
+	var processUserFeedChange = function(options) {
+		updateStatus('Loading...');
+		$.extend(options,{success : processUserFeedData});
+		$.loadFeed(options);
+		appSettings.currentFeedId = options.id;
+	};
 
 	var processFeedChange = function(options) {
 		updateStatus('Loading...');
-		$.loadFeed({
-			url : options.url,
-			callback : processFeedData
-		});
+		$.extend(options,{success : processFeedData});
+		$.loadFeed(options);
 		appSettings.currentFeedId = options.id;
 	};
 
@@ -260,13 +311,7 @@ $(document).ready(function() {
 		if (selectedFeedData) {
 			var txt = selectedFeedData.entries[appSettings.currentPostId].content;
 			log('applyContentSettings is called');
-			try {
-				// try to parse if good HTML
-				var tmp = $(txt).text();
-				txt = tmp;
-			} catch (err) {
-				log(err);
-			}
+			
 			$('.content-source').html(txt);
 			$('.wsContentHeader').html(selectedFeedData.title + ': ' + selectedFeedData.entries[appSettings.currentPostId].title);
 			$('.wsContentPanel').html('');
@@ -277,19 +322,8 @@ $(document).ready(function() {
 	};
 
 	var processPostChange = function(options) {
-		//options.id = $('#feedPostSelect option:selected').index();
-		
-		var selected = options.id;
-		log('index: ' + selected);
-		if (!selected) {
-			if ($('#feedPostSelect option').length > 0) {
-				selected = 0;
-			} else {
-				log('No options to make progress');
-				return;
-			}
-		}
-		appSettings.currentPostId = selected;
+
+		appSettings.currentPostId =  options.id;
 		applyContentSettings();
 
 		log('processPostChange completed');
@@ -299,7 +333,8 @@ $(document).ready(function() {
 	$('#feedSelect').change(function() {
 		processFeedChange({
 			url : $('#feedSelect option:selected').val(),
-			id : $('#feedSelect option:selected').index()
+			id : $('#feedSelect option:selected').index(),
+			postElementSelector : '#feedPostSelect'
 		});
 	});
 	$('#feedPostSelect').change(function() {
@@ -308,25 +343,20 @@ $(document).ready(function() {
 		});
 	});
 
-	$('#feedSelect option:first').attr('selected', true);
-//	$('#feedSelect option:eq(' + appSettings.currentFeedId + ')').attr('selected', true);
-//	$('#feedPostSelect option:eq(' + appSettings.currentPostId + ')').attr('selected', true);
-	$('#feedPostSelect option:first').attr('selected', true);
+//	$('#feedSelect option:first').attr('selected', true);
+	$('#feedSelect option:eq(' + appSettings.currentFeedId + ')').attr('selected', true);
+	$('#feedPostSelect option:eq(' + appSettings.currentPostId + ')').attr('selected', true);
+//	$('#feedPostSelect option:first').attr('selected', true);
 	$('#feedSelect').trigger('change');
 	$('#fontSize').trigger('change');
-
+	displaySettings();
 	/*
 	 * $.loadFeed({ url : $('#feedSelect option:first').val(), callback :
 	 * processFeedData });
 	 */
 
-	$('#config-dialog').bind('dialogclose', function(event) {
-		appSettings.wordsPerLine = parseInt($("#wordsPerLine").val(), 10);
-		appSettings.wordsPerMinute = parseInt($("#wordsPerMinute").val(), 10);
 
-		appSettings.fontSize = $('#fontSize').val();
-		$('.wsContentPanel').css('font-size', getEmFontSize(appSettings.fontSize) + 'em');
-		log('save url' + saveSettingsActionUrl);
+	var saveSettingsOnServer = function() {
 		$.ajax({
 			url : saveSettingsActionUrl,
 			data : {
@@ -336,16 +366,50 @@ $(document).ready(function() {
 				updateStatus('Successfully saved settings');
 			},
 			error : function(data) {
-				console.log("Settings save error" + data);
+				log("Settings save error" + data);
 			}
 		});
+	};
+	$('#config-dialog').bind('dialogclose', function(event) {
+		appSettings.wordsPerLine = parseInt($("#wordsPerLine").val(), 10);
+		appSettings.wordsPerMinute = parseInt($("#wordsPerMinute").val(), 10);
+
+		appSettings.fontSize = $('#fontSize').val();
+		$('.wsContentPanel').css('font-size', getEmFontSize(appSettings.fontSize) + 'em');
+		log('save url' + saveSettingsActionUrl);
+		saveSettingsOnServer();
 	});
 
 	
 });
 
-function log(msg) {
-	if (debug) {
-		console.log(msg);
+function removeDuplicates(arr) {
+	var existing = [];
+	return $.grep(arr, function(v) {
+	    if ($.inArray(v.url, existing) !== -1) {
+	        return false;
+	    } else {
+	    	existing.push(v.url);
+	        return true;
+	    }
+	});
+}
+
+function isUniqueUrl(options) {
+	if(options.list) {
+		for ( var i = 0; i < options.list.length; i++) {
+			if(options.list[i].url === options.url) {
+				return false;
+			} 
+		}
+		return true;
 	}
 }
+function log(msg) {
+	if (debug) {
+		if(console.log) {
+			console.log(msg);
+		}
+	}
+}
+

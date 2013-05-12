@@ -65,6 +65,11 @@
 			<option value="">Select a Post</option>
 		</select>
 	</div>
+	<div class="userFeedInputDiv" id="userFeedInputDiv">
+		<label for="userFeedInput">Add a Feed</label>
+		<input type="text" value="" name="userFeedInput" id="userFeedInput" size="70"/>
+		<button class="addUserFeed" id="addUserFeed">Add</button>
+	</div>
 </div>
 <div class="settings-section">	
 <h3>Speed Settings</h3>	
