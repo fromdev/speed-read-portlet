@@ -15,7 +15,7 @@ import com.liferay.util.bridges.mvc.MVCPortlet;
  */
 public class SpeedReadPortlet extends MVCPortlet {
 
-	private static final String SETTINGS = "SPEED.READ.PORTLET.USER.SETTINGS";
+	public static final String SETTINGS = "SPEED.READ.PORTLET.USER.SETTINGS";
 
 	@ProcessAction(name ="saveSettings")
 	public void saveSettings(ActionRequest request, ActionResponse response) throws IOException, PortletException

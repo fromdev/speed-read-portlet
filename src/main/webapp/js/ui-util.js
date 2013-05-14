@@ -153,6 +153,10 @@
 		}
 		return false;
 	};
+	
+	$.getEmFontSize = function(fontSize) {
+		return (1 + (fontSize - 1) * 0.1);
+	};
 
 	function log(msg) {
 		if (debug) {

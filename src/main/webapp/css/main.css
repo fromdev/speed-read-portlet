@@ -1,3 +1,7 @@
+.speed-read-portlet-wrapper {
+	display: none;
+}
+
 .sliderSpan {
 	font-weight: bold;
 	color: #F6A828;
@@ -38,57 +42,87 @@
 	padding: 0px 10px;
 	margin: 10px 10px;
 }
+
 .settings-section {
 	border: 2px solid #dddddd;
 	padding: 0px 10px;
 	margin: 10px 10px;
 }
 
-.settings-section div{
-  overflow:hidden;
+.settings-section div {
+	overflow: hidden;
 }
 
 .settings-section div label {
-  width:90px;
-  display:block;
-  float:left;
-  text-align:left;
+	width: 90px;
+	display: block;
+	float: left;
+	text-align: left;
 }
 
-.settings-section div select{
-  margin-left:4px;
-  float:left;
+.settings-section div select {
+	margin-left: 4px;
+	float: left;
 }
 
 .settings-section .preview {
-  border: 1px solid #dddddd;
-  max-width:450px;
-  margin: 10px 10px;
-  padding: 0px 10px;
+	border: 1px solid #dddddd;
+	max-width: 450px;
+	margin: 10px 10px;
+	padding: 0px 10px;
 }
+
 .feedSelectDiv,.feedPostDiv {
 	margin: 10px 10px 10px 0px;
 }
 
 #userFeedInputDiv {
-	padding-bottom:5px;	
+	padding-bottom: 5px;
 }
+
+#userFeedInput {
+	padding: 4px 5px;
+	margin: 1px 0 0 4px;
+}
+
 #toolbar-wrapper .child {
 	margin: 10px auto;
 	width: 150px;
+	white-space: nowrap;
 }
 
 #toolbar {
 	margin: 0px auto;
 	padding: 4px;
 	display: inline-block;
+	overflow: auto;
 }
 /* support: IE7 */
 *+html #toolbar {
 	display: inline;
 }
-#status{
-	min-height:20px;
-	margin: 10px 10px;	
+
+#status {
+	min-height: 20px;
+	margin: 10px 10px;
 	padding: 0px 10px;
+	font-weight: bold;
+	line-height: 2em;
+	border: 2px solid #DDDDDD;
+}
+
+.success-message {
+	color: green;
+}
+
+.error-message {
+	color: red;
+}
+
+.info-message {
+	color: black;
+}
+
+#config-dialog {
+	display: none;
 }

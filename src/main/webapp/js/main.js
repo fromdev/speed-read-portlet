@@ -1,4 +1,5 @@
 $(document).ready(function() {
+
 	/*
 	 * Turn this flag to true for debug logs.
 	 */
@@ -12,22 +13,40 @@ $(document).ready(function() {
 		wordsPerMinute : 150,
 		wordsPerLine : 2,
 		fontSize : 11,
-		userFeedsList:[],
-		usingUserFeeds:false
+		userFeedsList : []
 	};
 
-	if(userPrefs) {
+	if (typeof userPrefs === 'undefined') {
+		// Reload the page if any of these vars not accessible
+		log('userPrefs undefined');
+		//location.reload();
+	} else {
 		log('found user prefs' + userPrefs);
-		appSettings = $.extend({},appSettings,userPrefs);		
+		appSettings = $.extend({}, appSettings, userPrefs);
 	}
-	
-	var getEmFontSize = function(fontSize) {
-		return (1 + (fontSize - 1) * 0.1);
+	$('#reload').hide();
+	$('.speed-read-portlet-wrapper').show();
+
+	var saveSettingsOnServer = function() {
+		$.ajax({
+			url : saveSettingsActionUrl,
+			data : {
+				"SPEED.READ.PORTLET.USER.SETTINGS" : JSON.stringify(appSettings)
+			},
+			success : function(data) {
+				showSuccess('Successfully saved settings');
+			},
+			error : function(data) {
+				log("Settings save error" + data);
+			}
+		});
 	};
 
-	//TODO - add remote call for welcome feed too.
-	$.addToCache({url:popularFeedsList[0].url, feed:welcomeFeed});
-	
+	$.addToCache({
+		url : popularFeedsList[0].url,
+		feed : welcomeFeed
+	});
+
 	var feedListUrl = "http://fromdevstatic.googlecode.com/svn/trunk/src/js/feed.list.json";
 
 	$.ajax({
@@ -53,13 +72,12 @@ $(document).ready(function() {
 	});
 	var feedsList = popularFeedsList;
 
-	if(appSettings.userFeedsList && (appSettings.userFeedsList.length > 0)) {
-		appSettings.usingUserFeeds = true;
-		feedsList = $.merge(popularFeedsList,appSettings.userFeedsList);
-		//eliminate duplicates
+	if (appSettings.userFeedsList && (appSettings.userFeedsList.length > 0)) {
+		feedsList = $.merge(popularFeedsList, appSettings.userFeedsList);
+		// eliminate duplicates
 		feedsList = removeDuplicates(feedsList);
 	}
-	
+
 	$('#feedSelect').buildOptions({
 		data : feedsList
 	});
@@ -83,9 +101,8 @@ $(document).ready(function() {
 	});
 	$('#fontSize').change(function() {
 		log('Font change triggered');
-		var fontSizeEm = getEmFontSize($(this).val());
+		var fontSizeEm = $.getEmFontSize($(this).val());
 		$('.preview').css('font-size', fontSizeEm + 'em');
-		// $('.wsContentPanel').css('font-size',fontSizeEm + 'em');
 	});
 
 	$('#config-dialog').dialog({
@@ -93,7 +110,7 @@ $(document).ready(function() {
 		width : 'auto',
 		title : 'Settings'
 	});
-	
+
 	$("#play").button({
 		text : false,
 		icons : {
@@ -108,7 +125,7 @@ $(document).ready(function() {
 					primary : "ui-icon-pause"
 				}
 			};
-			//applyContentSettings();
+			// applyContentSettings();
 			$('.content-source').wordSequencer({
 				displayElementClass : 'wsContentPanel',
 				wordsPerLine : appSettings.wordsPerLine,
@@ -143,14 +160,11 @@ $(document).ready(function() {
 	}).click(function() {
 		$('.content-source').wordSequencer('stop');
 	});
-	
 
-
-		var findNextFeedOrPost = function() {
+	var nextFeedOrPost = function() {
 
 		var feed = $.currentFeed();
 
-		
 		if (feed && (appSettings.currentPostId < (feed.entries.length - 1))) {
 			appSettings.currentPostId = appSettings.currentPostId + 1;
 			applyContentSettings();
@@ -174,26 +188,26 @@ $(document).ready(function() {
 		}
 
 	};
-	
+
 	$("#forward").button({
 		text : false,
 		icons : {
 			primary : "ui-icon-seek-next"
 		}
 	}).click(function() {
-        findNextFeedOrPost();	
-        saveSettingsOnServer();
-    });
-
+		nextFeedOrPost();
+		saveSettingsOnServer();
+	});
 
 	var displaySettings = function() {
+		hideStatus('');
 		log('feedId: ' + appSettings.currentFeedId + ' postid:' + appSettings.currentPostId);
-		
+
 		$("#feedSelect option:selected").prop("selected", false);
 		$('#feedSelect option:eq(' + appSettings.currentFeedId + ')').prop('selected', true);
 		$("#feedPostSelect option:selected").prop("selected", false);
 		$('#feedPostSelect option:eq(' + appSettings.currentPostId + ')').prop('selected', true);
-		
+
 		$.spanSliderSetValue({
 			value : appSettings.wordsPerMinute,
 			fieldId : "#wordsPerMinute"
@@ -206,7 +220,7 @@ $(document).ready(function() {
 			value : appSettings.fontSize,
 			fieldId : "#fontSize"
 		});
-		var fontSizeEm = getEmFontSize(appSettings.fontSize);
+		var fontSizeEm = $.getEmFontSize(appSettings.fontSize);
 		$('.preview').css('font-size', fontSizeEm + 'em');
 		$('.wsContentPanel').css('font-size', fontSizeEm + 'em');
 
@@ -218,7 +232,7 @@ $(document).ready(function() {
 		icons : {
 			primary : "ui-icon-gear"
 		}
-	}).click(function() {
+	}).click(function() {		
 		displaySettings();
 		if ($("#play").text() === "pause") {
 			$("#play").trigger('click');
@@ -227,30 +241,51 @@ $(document).ready(function() {
 	});
 
 	$("#addUserFeed").button({
-		text:false,
+		text : false,
 		icons : {
 			primary : "ui-icon-plusthick"
 		}
 	}).click(function() {
 		var newUrl = $('#userFeedInput').val().trim();
-		if($.validateUrl(newUrl)) {
-			if(isUniqueUrl({list:appSettings.userFeedsList,url:newUrl})) {
+		if ($.validateUrl(newUrl)) {
+			if (isUniqueUrl({
+				list : feedsList,
+				url : newUrl
+			})) {
 				processUserFeedChange({
 					url : newUrl,
 					feedElementSelector : '#feedSelect',
 					postElementSelector : '#feedPostSelect'
 				});
-			
+
 			} else {
-				updateStatus('This Feed is already in the list');
+				showError('This Feed is already in the list');
 			}
 		} else {
-			updateStatus('Please provide a valid feed URL');
+			showError('Please provide a valid feed URL');
 		}
 	});
-	$('#config').submit(function(){
+	$('#config').submit(function() {
 		return false;
 	});
+	var hideStatus = function(msg) {
+		$('#status').hide();
+	};
+
+	var showInfo = function(msg) {
+		$('#status').text(msg).removeClass().addClass('info-message');
+		$('#status').show();
+	};
+	var showSuccess = function(msg) {
+		
+		$('#status').text(msg).removeClass().addClass('success-message');
+		$('#status').show();
+	};
+	var showError = function(msg) {
+		$('#status').text(msg).removeClass().addClass('error-message');
+		$('#status').show();
+	};
+	
 	var processFeedData = function(options) {
 		log('callback called');
 		$(options.postElementSelector).buildPostOptions({
@@ -265,43 +300,41 @@ $(document).ready(function() {
 		// select.
 		$(options.postElementSelector).trigger('change');
 		appSettings.currentPostId = $(options.postElementSelector + " option:selected").index();
-		updateStatus('');
 	};
-	var updateStatus = function(msg) {
-		$('#status').text(msg);
-	};
+
 	var processUserFeedData = function(options) {
 		log('user feed callback called');
-		
-		appSettings.userFeedsList.push({title:options.feed.title, url:options.feed.feedUrl});
-		
-		$(options.feedElementSelector).addOption({value:options.feed.title, key:options.feed.feedUrl, selected:true});
 
-		$(options.postElementSelector).buildPostOptions({
-			data : options.feed
+		appSettings.userFeedsList.push({
+			title : options.feed.title,
+			url : options.feed.feedUrl
 		});
 
-		log('build user select done');
-		// This is needed since
-		// we need to bind
-		// change event every
-		// time we create a new
-		// select.
-		$(options.postElementSelector).trigger('change');
-		appSettings.currentPostId = 0;
+		$(options.feedElementSelector).addOption({
+			value : options.feed.title,
+			key : options.feed.feedUrl,
+			selected : true
+		});
 
-		updateStatus('');
+		processFeedData(options);
 	};
 	var processUserFeedChange = function(options) {
-		updateStatus('Loading...');
-		$.extend(options,{success : processUserFeedData});
+		showInfo('Loading...');
+		$.extend(options, {
+			success : processUserFeedData,
+			error : function() {
+				showError('Error adding this feed. Please enter a valid RSS/ATOM feed url.');
+			}
+		});
 		$.loadFeed(options);
 		appSettings.currentFeedId = options.id;
 	};
 
 	var processFeedChange = function(options) {
-		updateStatus('Loading...');
-		$.extend(options,{success : processFeedData});
+		showInfo('Loading...');
+		$.extend(options, {
+			success : processFeedData
+		});
 		$.loadFeed(options);
 		appSettings.currentFeedId = options.id;
 	};
@@ -311,7 +344,7 @@ $(document).ready(function() {
 		if (selectedFeedData) {
 			var txt = selectedFeedData.entries[appSettings.currentPostId].content;
 			log('applyContentSettings is called');
-			
+
 			$('.content-source').html(txt);
 			$('.wsContentHeader').html(selectedFeedData.title + ': ' + selectedFeedData.entries[appSettings.currentPostId].title);
 			$('.wsContentPanel').html('');
@@ -323,9 +356,9 @@ $(document).ready(function() {
 
 	var processPostChange = function(options) {
 
-		appSettings.currentPostId =  options.id;
+		appSettings.currentPostId = options.id;
 		applyContentSettings();
-
+		showSuccess('Successfully loaded the feed data!');
 		log('processPostChange completed');
 
 	};
@@ -343,73 +376,50 @@ $(document).ready(function() {
 		});
 	});
 
-//	$('#feedSelect option:first').attr('selected', true);
 	$('#feedSelect option:eq(' + appSettings.currentFeedId + ')').attr('selected', true);
 	$('#feedPostSelect option:eq(' + appSettings.currentPostId + ')').attr('selected', true);
-//	$('#feedPostSelect option:first').attr('selected', true);
 	$('#feedSelect').trigger('change');
 	$('#fontSize').trigger('change');
 	displaySettings();
-	/*
-	 * $.loadFeed({ url : $('#feedSelect option:first').val(), callback :
-	 * processFeedData });
-	 */
 
-
-	var saveSettingsOnServer = function() {
-		$.ajax({
-			url : saveSettingsActionUrl,
-			data : {
-				"SPEED.READ.PORTLET.USER.SETTINGS" : JSON.stringify(appSettings)
-			},
-			success : function(data) {
-				updateStatus('Successfully saved settings');
-			},
-			error : function(data) {
-				log("Settings save error" + data);
-			}
-		});
-	};
 	$('#config-dialog').bind('dialogclose', function(event) {
 		appSettings.wordsPerLine = parseInt($("#wordsPerLine").val(), 10);
 		appSettings.wordsPerMinute = parseInt($("#wordsPerMinute").val(), 10);
 
 		appSettings.fontSize = $('#fontSize').val();
-		$('.wsContentPanel').css('font-size', getEmFontSize(appSettings.fontSize) + 'em');
+		$('.wsContentPanel').css('font-size', $.getEmFontSize(appSettings.fontSize) + 'em');
 		log('save url' + saveSettingsActionUrl);
 		saveSettingsOnServer();
 	});
 
-	
 });
 
 function removeDuplicates(arr) {
 	var existing = [];
 	return $.grep(arr, function(v) {
-	    if ($.inArray(v.url, existing) !== -1) {
-	        return false;
-	    } else {
-	    	existing.push(v.url);
-	        return true;
-	    }
+		if ($.inArray(v.url, existing) !== -1) {
+			return false;
+		} else {
+			existing.push(v.url);
+			return true;
+		}
 	});
 }
 
 function isUniqueUrl(options) {
-	if(options.list) {
+	if (options.list) {
 		for ( var i = 0; i < options.list.length; i++) {
-			if(options.list[i].url === options.url) {
+			if (options.list[i].url === options.url) {
 				return false;
-			} 
+			}
 		}
 		return true;
 	}
 }
 function log(msg) {
 	if (debug) {
-		if(console.log) {
+		if (console.log) {
 			console.log(msg);
 		}
 	}
 }
-

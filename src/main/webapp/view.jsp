@@ -1,4 +1,5 @@
 
+<%@page import="com.fromdev.portlets.SpeedReadPortlet"%>
 <%@page import="javax.portlet.PortletPreferences"%>
 <%
 	/**
@@ -22,21 +23,20 @@
 
 <%
 	PortletPreferences preferences = renderRequest.getPreferences();
-	String settings = preferences.getValue("SPEED.READ.PORTLET.USER.SETTINGS", "{}");
+	String settings = preferences.getValue(SpeedReadPortlet.SETTINGS, "{}");
 
 %>
 <script>
-	saveSettingsActionUrl = '<portlet:actionURL name="saveSettings"/>';
-	userPrefs = <%=settings%>;
+	window.saveSettingsActionUrl = '<portlet:actionURL name="saveSettings"/>';
+	window.userPrefs = <%=settings%>;
 </script>
-
+<div class='speed-read-portlet-wrapper'>
 <div class="wsContentHeader">Welcome To Speed Read Portlet</div>
 <div class="wsContentWrapper">
 	<div class="wsContentPanel"></div>
 </div>
 
-<div class="content-source">One Two Three Four Five Six Seven
-	Eight Nine Ten Eleven, twelve, Thirteen, fourteen, fifteen</div>
+<div class="content-source">Speed reading is a technique used to improve one's ability to read quickly. Speed reading methods include chunking and eliminating subvocalization. The many available speed reading training programs include books, videos, software, and seminars.</div>
 <div id="toolbar-wrapper">
  	<div class="child">
  		<div class="ui-widget-header ui-corner-all" id="toolbar">
@@ -49,7 +49,7 @@
  	</div>	
 </div>
 <div id="config-dialog">
-<span id="status"></span>
+<div id="status"></div>
 <form id="config">	
 <div class="settings-section">	
 <h3>Content Settings</h3>	
@@ -66,7 +66,7 @@
 		</select>
 	</div>
 	<div class="userFeedInputDiv" id="userFeedInputDiv">
-		<label for="userFeedInput">Add a Feed</label>
+		<label for="userFeedInput">Add a Feed URL</label>
 		<input type="text" value="" name="userFeedInput" id="userFeedInput" size="70"/>
 		<button class="addUserFeed" id="addUserFeed">Add</button>
 	</div>
@@ -94,17 +94,13 @@
 	<div class="preview">Preview Display</div>
 </div>
 </form>
-<div class='settings-header'>
-<div class="ui-widget">
-    <div class="ui-state-highlight ui-corner-all" style="padding: 0 .7em;"> 
-        <p style="margin:0;">
-            <span class="ui-icon ui-icon-info" 
-                style="float: left; margin-right: .3em;"></span>
-            <strong>Hey: No Save Button?</strong> Changes are auto applied on close of dialog (hit ESC) when you are done
-        </p>
-    </div>
+<div class='settings-section'>
+<div class="info-message"><strong>Hey: No Save Button?</strong> Changes are auto applied on close of dialog (hit ESC) when you are done</div>
 </div>
-</div>
-
 </div>
 <%@ include file="footer.jsp"%>
+</div>
+<div id='reload'>
+Welcome To Speed Read Portlet
+<button id='reload-button' onclick="javascript:location.reload();">Start Reading Feeds</button>
+</div>

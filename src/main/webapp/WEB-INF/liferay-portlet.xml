@@ -6,15 +6,15 @@
 		<portlet-name>speed-read-portlet</portlet-name>
 		<icon>/icon.png</icon>
 		<instanceable>false</instanceable>
-		<header-portlet-css>/css/main.css</header-portlet-css>
 		<header-portlet-css>/css/flick/jquery-ui-1.10.2.custom.min.css</header-portlet-css>
+		<header-portlet-css>/css/main.css</header-portlet-css>
 		<header-portlet-javascript>/js/jquery-1.9.1.js</header-portlet-javascript>
 		<header-portlet-javascript>/js/jquery-ui-1.10.2.custom.js</header-portlet-javascript>
 		<header-portlet-javascript>/js/jquery.word.sequencer.js</header-portlet-javascript>		
 		<header-portlet-javascript>/js/ui-util.js</header-portlet-javascript>		
 		<header-portlet-javascript>/js/feed-util.js</header-portlet-javascript>		
-		<footer-portlet-javascript>/js/main.js</footer-portlet-javascript>
-		<footer-portlet-javascript>/js/local.feed.list.js</footer-portlet-javascript>
+		<header-portlet-javascript>/js/local.feed.list.js</header-portlet-javascript>
+		<header-portlet-javascript>/js/main.js</header-portlet-javascript>
 	</portlet>
 	<role-mapper>
 		<role-name>administrator</role-name>
